@@ -109,15 +109,28 @@
 	<select id="TableSkyTestDAO.getCountByObject" parameterClass="tableListVO" resultClass="java.lang.Integer" >
 		SELECT	COUNT(*)
 		FROM	TB_SKY_TEST
-		<dynamic prepend="WHERE">
-			<isNotNull property="title">
-				title like '%' || #title# || '%'
-			</isNotNull>
-			<isNotNull property="contents">
-				contents like #contents# || '%'
-			</isNotNull>
-		</dynamic>
+		WHERE 1=1
+			<dynamic prepend="AND">
+				<isNotEmpty property="itemText">
+					<isEqual property="searchItem" compareValue="all">
+						title like '%' || #itemText# || '%' OR contents like #itemText# || '%'
+					</isEqual>
+					<isEqual property="searchItem" compareValue="title">
+						title like '%' || #itemText# || '%'
+					</isEqual>
+					<isEqual property="searchItem" compareValue="contents">
+						contents like #itemText# || '%'
+					</isEqual>
+				</isNotEmpty>
+			</dynamic>
 		ORDER BY SEQ desc
 	</select>
-
+<!-- 		<dynamic prepend="WHERE"> -->
+<!-- 			<isNotNull property="title"> -->
+<!-- 				title like '%' || #title# || '%' -->
+<!-- 			</isNotNull> -->
+<!-- 			<isNotNull property="contents"> -->
+<!-- 				contents like #contents# || '%' -->
+<!-- 			</isNotNull> -->
+<!-- 		</dynamic> -->
 </sqlMap>

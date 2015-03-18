@@ -74,7 +74,7 @@
 <script>
 	//오류메시지 전달 시 처리
 	window:onload = function(){
-		var msg = document.getElementById("msg").value;
+		var msg = "<c:out value='' />";
 		if(msg!=""){
 			alert(msg);
 		}

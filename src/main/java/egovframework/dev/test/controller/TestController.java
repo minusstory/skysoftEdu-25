@@ -3,7 +3,6 @@ package egovframework.dev.test.controller;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import egovframework.dev.test.service.TableSkyTestService;
+import egovframework.dev.test.utils.PageUtilSky;
 import egovframework.dev.test.vo.TableListFileVO;
 import egovframework.dev.test.vo.TableListVO;
 import egovframework.framework.annotation.PageTitle;
@@ -92,16 +92,14 @@ public class TestController {// 주석
 		String storedPath = fileuploadPropService.getString("fileupload.global.target-directory");//저장경로
 		try{
 			if(delFileYn.equals("Y")){ //기존 파일을 삭제할 경우
-				tableSkyTestService.deleteAttachFile(seq);
-
 				List<TableListVO> list = tableSkyTestService.searchBoard(seq);
-
-				File prevFile = new File(storedPath + list.get(0).getSavefilenm()); //기존 파일 이름
+				File prevFile = new File(storedPath , list.get(0).getSavefilenm()); //기존 파일 이름
 				prevFile.delete(); // 이전파일 삭제
+
+				tableSkyTestService.deleteAttachFile(seq); //DB파일 삭제
 			}
 
 			if(!(file.isEmpty())){ //파일 등록
-				System.out.println("abababababab");
 				String realfilenm = file.getOriginalFilename(); //신규 파일 이름
 				String savefilemn = getSaveFilemn(seq);
 				File targetFile = new File(storedPath,savefilemn);
@@ -169,7 +167,7 @@ public class TestController {// 주석
 	@RequestMapping(value = "/test/delete.do")
 	public ModelAndView deleteBoard(int seq) throws Exception {
 		List<TableListVO> lists = tableSkyTestService.searchBoard(seq);
-		if(lists.get(0).getRealfilenm() !=null )  //파일이 있는 경우 삭제
+		if(lists.get(0).getSavefilenm() !=null )  //파일이 있는 경우 삭제
 		{
 			tableSkyTestService.deleteAttachFile(seq);
 		}
@@ -182,31 +180,36 @@ public class TestController {// 주석
 	@RequestMapping(value = "/test/list.do") //형식은 왠만하면 VO :
 	public ModelAndView retrieveList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @ModelAttribute("tableListVO") TableListVO tableListVO, ModelMap model) throws Exception {
 		int totalRowCount = 0 ;
-		// PageUtil pu = new PageUtil(pageNum,totalRowCount,10,10);
+		tableListVO.setRecordCountPerPage(10);
+		int startRow = (pageNum-1)*tableListVO.getRecordCountPerPage();
 
-		PaginationInfo paging = new PaginationInfo();
-		paging.setCurrentPageNo(pageNum);
-		paging.setRecordCountPerPage(10);
-		paging.setPageSize(10);
-
-		tableListVO.setStartrow(paging.getFirstRecordIndex()); // totalRowCount가 paging의 FirstRecordIndex에 영향을 미치지 않는다.
+		tableListVO.setStartrow(startRow); // totalRowCount가 paging의 FirstRecordIndex에 영향을 미치지 않는다.
 		tableListVO.setRecordCountPerPage(10);
 
 		List<TableListVO> list = tableSkyTestService.getTableListPlusFile(tableListVO);
-		for (int i=0; i < list.size(); i++){
-			System.out.println(list.get(i).getRealfilenm());
-		}
 
 		totalRowCount = tableSkyTestService.getCountByObject(tableListVO);
-		paging.setTotalRecordCount(totalRowCount);
-
-
-		model.addAttribute("paging", paging);
+		model.addAttribute("currentPageNo", pageNum);
 		model.addAttribute("list", list);
 		model.addAttribute("tableListVO",tableListVO);
 
+		HashMap<String,Object> map  = new HashMap<String,Object>();
+		map.put("searchItem", tableListVO.getSearchItem());
+		map.put("itemText", tableListVO.getItemText());
+		PageUtilSky pageUtil = new PageUtilSky();
+		model.addAttribute("pageString",pageUtil.makePageAnchorByHref(String.valueOf(pageNum), String.valueOf(totalRowCount), String.valueOf(10), String.valueOf(10), "/test/list.do", map));
+
 		return new ModelAndView("test/list");
+
 		// tableListVO는 jsp에서 불려지는데 넘겨지는 방법??
+//		PageUtil pu = new PageUtil(pageNum,totalRowCount,10,10);
+//		PaginationInfo paging = new PaginationInfo();
+//		paging.setCurrentPageNo(pageNum);
+//		paging.setRecordCountPerPage(10);
+//		paging.setPageSize(10);
+//		paging.setTotalRecordCount(totalRowCount);
+//		model.addAttribute("paging", paging);
+
 	}
 
 	@PageTitle("선택된 글 삭제")
@@ -251,7 +254,7 @@ public class TestController {// 주석
 	@RequestMapping(value = "/test/excelAllDown.do")
 	public ModelAndView excelAllDown(@ModelAttribute("tableListVO") TableListVO tableListVO, ModelMap model) throws Exception {
 		int totalRowCount = tableSkyTestService.getCountByObject(tableListVO);
-		tableListVO.setStartrow(1);
+		tableListVO.setStartrow(0);
 		tableListVO.setRecordCountPerPage(totalRowCount);
 
 		List<TableListVO> lists = tableSkyTestService.getTableListPlusFile(tableListVO);
@@ -309,6 +312,8 @@ public class TestController {// 주석
 
 		String filename = tableListVO.getSavefilenm(); // 파일 경로 저장
 
+		String filename2 = new String(tableListVO.getRealfilenm().getBytes("euc-kr"),"8859_1");
+
 		String fileStoredPath = fileuploadPropService.getString("fileupload.global.target-directory");
 
 		File sFile = new File(fileStoredPath,filename);
@@ -322,7 +327,8 @@ public class TestController {// 주석
 			response.setBufferSize(fSize);
 			response.setContentType(mimetype);
 			response.setHeader("Content-Disposition", "attachment; filename=\""
-					+ tableListVO.getRealfilenm() + "\"");
+//					+ tableListVO.getRealfilenm() + "\""); //파일 한글 깨짐
+					+ filename2 + "\"");
 			response.setContentLength(fSize);
 
 			FileCopyUtils.copy(in, response.getOutputStream());

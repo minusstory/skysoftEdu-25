@@ -123,15 +123,20 @@
 
 // 		frm.action = "<c:url value='/test/searchlist.do'/>";
 		frm.action = "<c:url value='/test/list.do'/>";
+		frm.pageNum.value = 1; //검색 후 무조건 1페이지
 		frm.submit();
 	}
+
 
 </script>
 
 <form name="frm" id="frm" method="get" action="/test/list.do">
-	<input type="hidden" id="pageNum" name="pageNum"
-		value="${paging.currentPageNo }" /> <input type="hidden"
-		id="recordCountPerPage" name="recordCountPerPage" value="10" />
+<%-- 	<input type="hidden" id="pageNum" name="pageNum"  value="${paging.currentPageNo}" /> --%>
+	<input type="hidden" id="pageNum" name="pageNum"  value="${currentPageNo}" />
+
+
+<!-- 	<input type="hidden" id="recordCountPerPage" name="recordCountPerPage" value="10" /> -->
+<input type="hidden" id="recordCountPerPage" name="recordCountPerPage" value="10" />
 
 	<div>
 		<select id="searchItem" name="searchItem">
@@ -205,13 +210,15 @@
 
 	<!-- 페이징 처리 -->
 	<div class="paging">
-		<img alt="처음" src="../images/common/btn/btn_pre_end.gif"> <img
-			alt="이전" src="../images/common/btn/btn_pre.gif">
-		<ui:pagination paginationInfo="${paging}" type="text"
-			jsFunction="fn_pageNavi" />
-		<img alt="다음" src="../images/common/btn/btn_next.gif"> <img
-			alt="마지막" src="../images/common/btn/btn_next_end.gif">
+<!-- 		<img alt="처음" src="../images/common/btn/btn_pre_end.gif"> <img -->
+<!-- 			alt="이전" src="../images/common/btn/btn_pre.gif"> -->
+<%-- 		<ui:pagination paginationInfo="${paging}" type="text" --%>
+<%-- 			jsFunction="fn_pageNavi" /> --%>
+<!-- 		<img alt="다음" src="../images/common/btn/btn_next.gif"> <img -->
+<!-- 			alt="마지막" src="../images/common/btn/btn_next_end.gif"> -->
+			<c:out value="${pageString }" escapeXml="false"/>
 	</div>
+
 	<!-- 페이징 처리 -->
 	<%--
 	<a href="list.do?pageNum=1" >[처음]</a>
