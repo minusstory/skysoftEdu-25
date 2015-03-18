@@ -3,9 +3,7 @@ package egovframework.dev.test.vo;
 public class PagingVO {
 	private int startrow;
 	private int endrow;
-	public PagingVO() {
-		super();
-	}
+	private int recordCountPerPage;
 
 	public int getStartrow() {
 		return startrow;
@@ -18,6 +16,14 @@ public class PagingVO {
 	}
 	public void setEndrow(int endrow) {
 		this.endrow = endrow;
+	}
+
+	public int getRecordCountPerPage() {
+		return recordCountPerPage;
+	}
+
+	public void setRecordCountPerPage(int recordCountPerPage) {
+		this.recordCountPerPage = recordCountPerPage;
 	}
 
 }

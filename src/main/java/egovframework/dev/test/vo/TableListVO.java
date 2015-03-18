@@ -2,7 +2,7 @@ package egovframework.dev.test.vo;
 
 import java.util.Date;
 
-public class TableListVO {
+public class TableListVO extends PagingVO {
 	private int seq;
 	private String title;
 	private String contents;

@@ -20,7 +20,6 @@ public class TableSkyTestDAO extends EgovAbstractDAO {
 
 	public Integer getCountAll(){
 		return (Integer) selectByPk("TableSkyTestDAO.getCountAll", 10);
-
 	}
 
 	public List<TableListVO> searchBoard(int seq) {

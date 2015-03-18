@@ -56,7 +56,7 @@
 <script>
 	function example() {
 		if (confirm("삭제하시겠습니까")) { //예
-			document.location.href = '/test/delete.do?seq=${listVO.seq}';
+			document.location.href = '/test/delete.do?seq=${tableListVO.seq}';
 		} else { //아니오
 			return;
 		}
@@ -81,7 +81,6 @@
 		else {
 			document.getElementById('updateBtn').disabled = true;
 			document.tableListVO.submit();
-			// 			alert(trim(document.getElementById('contents').value));
 		}
 	}
 	function trim(str) {
@@ -104,10 +103,7 @@
                     msglen--;
                 }
                 if(msglen < 0){
-// 					alert("글자 수가 초과했습니다. 다시 작성하여 주세요");
-// 					document.getElementById('title').focus();
                 	textval.value = tmpstr;
-//                     break;
                     return false;
                 }else{
                     tmpstr += temp;

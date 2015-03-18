@@ -1,6 +1,7 @@
 package egovframework.dev.test.controller;
 
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
@@ -15,12 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import egovframework.dev.test.service.TableSkyTestService;
-import egovframework.dev.test.utils.PageUtil;
 import egovframework.dev.test.vo.BoardVO;
-import egovframework.dev.test.vo.PagingVO;
 import egovframework.dev.test.vo.TableListVO;
 import egovframework.framework.annotation.PageTitle;
-
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 /**-----------------------------------------------------------------------
  * skysoft edu Project
@@ -59,22 +58,29 @@ public class TestController {//주석
     @RequestMapping(value="/test/list.do")
     public ModelAndView retrieveList(
     		@RequestParam(value="pageNum",defaultValue="1") int pageNum,
-    		@ModelAttribute("PagingVO") PagingVO pagingVO,
     		@ModelAttribute("tableListVO") TableListVO tableListVO,
     		ModelMap model
     	)throws Exception {
 
     	int totalRowCount = tableSkyTestService.getCountAll();
 
-    	PageUtil pu = new PageUtil(pageNum,totalRowCount,10,10);
+    	//PageUtil pu = new PageUtil(pageNum,totalRowCount,10,10);
 
-    	pagingVO.setStartrow(pu.getStartRow());
-    	pagingVO.setEndrow(pu.getEndRow());
+    	//pagingVO.setStartrow(pu.getStartRow());
+    	//pagingVO.setEndrow(pu.getEndRow());
+    	PaginationInfo paging = new PaginationInfo();
+    	paging.setCurrentPageNo(pageNum);
+    	paging.setRecordCountPerPage(10);
+    	paging.setPageSize(10);
+    	paging.setTotalRecordCount(totalRowCount);
 
-    	List<TableListVO> list = tableSkyTestService.getTableList(pagingVO);
+    	tableListVO.setStartrow(paging.getFirstRecordIndex());
+    	tableListVO.setRecordCountPerPage(10);
+    	List<TableListVO> list = tableSkyTestService.getTableList(tableListVO);
 
-    	System.out.println(list.get(0).getRegdtm()+"///////////////////////////");
-    	model.addAttribute("pu",pu);
+    	//System.out.println(list.get(0).getRegdtm()+"///////////////////////////");
+    	//model.addAttribute("pu",pu);
+    	model.addAttribute("paging", paging);
     	model.addAttribute("list",list);
 
         return new ModelAndView("test/list");
@@ -131,5 +137,20 @@ public class TestController {//주석
     	tableSkyTestService.deleteBoard(seq);
     	return new ModelAndView("redirect:/test/list.do");
     }
+
+    @RequestMapping(value="/test/selectDelete.do")
+    public ModelAndView deleteBoards(
+    		String seqs
+    		)throws Exception{
+    	StringTokenizer st = new StringTokenizer(seqs," ,");
+//    	System.out.println(seqs+"///////////////////////////////////////////////");
+    	while(st.hasMoreTokens()){
+//    		System.out.println(Integer.valueOf(st.nextToken())+"////////////////////////////////////");
+    		tableSkyTestService.deleteBoard(Integer.valueOf(st.nextToken()));
+    	}
+
+    	return new ModelAndView("redirect:/test/list.do");
+    }
+
 
 }
