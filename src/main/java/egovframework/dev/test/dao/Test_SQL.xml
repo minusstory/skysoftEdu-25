@@ -7,6 +7,7 @@
 	<typeAlias alias="tableListVO" type="egovframework.dev.test.vo.TableListVO" />
 	<typeAlias alias="PagingVO" type="egovframework.dev.test.vo.PagingVO" />
 	<typeAlias alias="tableListFileVO" type="egovframework.dev.test.vo.TableListFileVO"/>
+	<typeAlias alias="apiVO" type="egovframework.dev.test.vo.ApiVO" />
 <!-- 	<typeAlias alias="" type="" /> -->
 
 	<!-- typeAlias :: End! -->
@@ -125,12 +126,40 @@
 			</dynamic>
 		ORDER BY SEQ desc
 	</select>
-<!-- 		<dynamic prepend="WHERE"> -->
-<!-- 			<isNotNull property="title"> -->
-<!-- 				title like '%' || #title# || '%' -->
-<!-- 			</isNotNull> -->
-<!-- 			<isNotNull property="contents"> -->
-<!-- 				contents like #contents# || '%' -->
-<!-- 			</isNotNull> -->
-<!-- 		</dynamic> -->
+
+
+	<!-- OPENAPI -->
+	<insert id="OpenApiDAO.addNews" parameterClass="apiVO">
+		<selectKey keyProperty="seq" resultClass="int">
+			SELECT SEQ_SKY_OPENAPI.NEXTVAL AS ID FROM DUAL
+		</selectKey>
+		INSERT INTO TB_SKY_OPENAPI(SEQ,TITLE,DESCRIPTION, LINK , LASTBUILDDATE)
+		VALUES (#seq#,#title#,#description#,#link#,#lastBuildDate#)
+	</insert>
+
+
+	<select id="OpenApiDAO.getCountAll" resultClass="java.lang.Integer">
+		SELECT	COUNT(*)
+		FROM	TB_SKY_OPENAPI
+	</select>
+
+	<select id="OpenApiDAO.searchNews" parameterClass="java.lang.Integer" resultClass="apiVO">
+		SELECT 	*
+		FROM	TB_SKY_OPENAPI
+		WHERE	SEQ = #seq#
+	</select>
+
+	<select id="OpenApiDAO.getNewsList" parameterClass="apiVO" resultClass="apiVO">
+		SELECT  a.*
+		FROM	(SELECT aa.* , rownum rnum
+					FROM
+					(	SELECT *
+						FROM TB_SKY_OPENAPI
+						WHERE 1=1
+						ORDER BY SEQ desc
+					)
+				 aa
+				)  a
+		<![CDATA[ where a.rnum>=#startrow#+1 AND a.rnum<=#startrow#+#recordCountPerPage#	]]>
+	</select>
 </sqlMap>

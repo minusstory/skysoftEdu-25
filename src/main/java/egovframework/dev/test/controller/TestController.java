@@ -187,7 +187,7 @@ public class TestController {// 주석
 		tableListVO.setRecordCountPerPage(10);
 
 		List<TableListVO> list = tableSkyTestService.getTableListPlusFile(tableListVO);
-
+		System.out.println("tableListVO.getSearchItem = " + tableListVO.getSearchItem());
 		totalRowCount = tableSkyTestService.getCountByObject(tableListVO);
 		model.addAttribute("currentPageNo", pageNum);
 		model.addAttribute("list", list);
