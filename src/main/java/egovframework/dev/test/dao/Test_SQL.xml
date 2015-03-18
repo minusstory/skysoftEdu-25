@@ -4,12 +4,70 @@
 <sqlMap namespace="TestSQL">
 
 	<!-- typeAlias :: Start! -->
+	<typeAlias alias="tableListVO" type="egovframework.dev.test.vo.TableListVO" />
+	<typeAlias alias="PagingVO" type="egovframework.dev.test.vo.PagingVO" />
+	<typeAlias alias="boardVO" type="egovframework.dev.test.vo.BoardVO" />
+<!-- 	<typeAlias alias="" type="" /> -->
+
 	<!-- typeAlias :: End! -->
 
+	<resultMap id="getTableListMap" class="tableListVO">
+		<result property="seq" column ="SEQ" />
+		<result property="title" column="TITLE"/>
+		<result property="contents" column="CONTENTS"/>
+		<result property="regdtm" column="REG_DTM"/>
+	</resultMap>
+
 	<!-- C -->
+	<insert id="TableSkyTestDAO.addBoard" parameterClass="boardVO">
+		INSERT INTO TB_SKY_TEST(SEQ,TITLE,CONTENTS,REG_DTM)
+		VALUES(SEQ_SKY_TEST.nextval ,  #title# , #contents# , sysdate)
+	</insert>
+
+
 	<!-- R -->
+	<select id="TableSkyTestDAO.searchBoard" parameterClass="java.lang.Integer" resultMap="getTableListMap">
+		SELECT 	*
+		FROM	TB_SKY_TEST
+		WHERE	seq = #seq#
+	</select>
+
+
 	<!-- U -->
+	<update id="TableSkyTestDAO.updateBoard" parameterClass="tableListVO">
+		UPDATE  TB_SKY_TEST
+		SET		TITLE = #title# , CONTENTS = #contents# , REG_DTM = sysdate
+		WHERE 	SEQ = #seq#
+	</update>
+
+
+
+
+
 	<!-- D -->
+	<delete id="TableSkyTestDAO.deleteBoard" parameterClass="java.lang.Integer">
+		DELETE FROM TB_SKY_TEST
+		WHERE seq = #seq#
+	</delete>
+
+
 	<!-- L -->
+
+	<select id="TableSkyTestDAO.getList" parameterClass="PagingVO" resultMap="getTableListMap">
+		SELECT  *
+		FROM	(SELECT aa.* , rownum rnum
+					FROM
+					(	SELECT * FROM TB_SKY_TEST ORDER BY SEQ asc )
+					 aa
+				)
+		<![CDATA[ WHERE rnum>=#startrow# AND rnum<=#endrow#	]]>
+
+<!-- 		SELECCT * FROM TB_SKY_TEST -->
+	</select>
+
+	<select id="TableSkyTestDAO.getCountAll" parameterClass="java.lang.Integer" resultClass="java.lang.Integer">
+		SELECT 	COUNT(*)
+		FROM	TB_SKY_TEST
+	</select>
 
 </sqlMap>

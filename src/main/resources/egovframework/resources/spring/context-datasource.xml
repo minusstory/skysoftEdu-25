@@ -6,9 +6,9 @@
 	<!-- 현재 개발자 교육용용으로 사용되는 DB -->
    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
-		<property name="url" value="jdbc:oracle:thin:@192.168.3.206:1521:ORA11" />
-		<property name="username" value="TEST"/>
-	    <property name="password" value="TEST0801"/>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:PSORCL" />
+		<property name="username" value="plusstory"/>
+	    <property name="password" value="plusstory"/>
 	</bean>
 
 	<!-- sqlbook DB  -->
