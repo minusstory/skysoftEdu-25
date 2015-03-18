@@ -13,7 +13,7 @@ import egovframework.rte.psl.dataaccess.EgovAbstractDAO;
 public class TableSkyTestDAO extends EgovAbstractDAO {
 
 	public List<TableListVO> getTableList(PagingVO pagingVO){
-		return list("TableSkyTestDAO.getList", pagingVO);
+		return list("TableSkyTestDAO.getTableList", pagingVO);
 
 //		return listWithPaging("TableSkyTestDAO.getList", pagingVO, 10, 10);
 	}
@@ -36,5 +36,10 @@ public class TableSkyTestDAO extends EgovAbstractDAO {
 
 	public void updateBoard(TableListVO tableListVO) {
 		update("TableSkyTestDAO.updateBoard",tableListVO);
+	}
+
+	public List<TableListVO> getAllTabelList() {
+		Object obj = null;
+		return list("TableSkyTestDAO.getAllTableList",obj);
 	}
 }

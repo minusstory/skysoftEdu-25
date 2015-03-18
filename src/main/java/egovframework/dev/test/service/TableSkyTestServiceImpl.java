@@ -48,4 +48,9 @@ public class TableSkyTestServiceImpl extends AbstractServiceImpl implements
 	public void updateBoard(TableListVO tableListVO) {
 		tableSkyTestDAO.updateBoard(tableListVO);
 	}
+
+	@Override
+	public List<TableListVO> getAllTableList() {
+		return tableSkyTestDAO.getAllTabelList();
+	}
 }

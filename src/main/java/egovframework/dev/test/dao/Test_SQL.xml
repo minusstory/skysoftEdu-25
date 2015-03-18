@@ -47,14 +47,20 @@
 
 	<!-- L -->
 
-	<select id="TableSkyTestDAO.getList" parameterClass="PagingVO" resultMap="getTableListMap">
+	<select id="TableSkyTestDAO.getTableList" parameterClass="PagingVO" resultMap="getTableListMap">
 		SELECT  *
 		FROM	(SELECT aa.* , rownum rnum
 					FROM
-					(	SELECT * FROM TB_SKY_TEST ORDER BY SEQ asc )
+					(	SELECT * FROM TB_SKY_TEST ORDER BY SEQ desc )
 					 aa
 				)
 		<![CDATA[ WHERE rnum>=#startrow#+1 AND rnum<=#startrow#+#recordCountPerPage#	]]>
+	</select>
+
+	<select id="TableSkyTestDAO.getAllTableList" resultMap="getTableListMap">
+		SELECT *
+		FROM TB_SKY_TEST
+		ORDER BY SEQ desc
 	</select>
 
 	<select id="TableSkyTestDAO.getCountAll" parameterClass="java.lang.Integer" resultClass="java.lang.Integer">

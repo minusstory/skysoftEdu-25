@@ -9,5 +9,6 @@
 	<bean id="fileDownloadView" class="egovframework.framework.servlet.view.FileDownloadView" />
 	<bean id="keisAjaxView" class="egovframework.framework.servlet.view.KeisAjaxView" />
 	<bean id="richEditFileUploadView" class="egovframework.framework.servlet.view.RichEditFileUploadView" />
+	<bean id="categoryExcelView" class="egovframework.dev.test.view.CategoryExcelView" />
 
 </beans>

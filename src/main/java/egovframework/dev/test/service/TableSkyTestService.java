@@ -13,4 +13,5 @@ public interface TableSkyTestService {
 	public void addBoard(BoardVO boardVO);
 	public void deleteBoard(int seq);
 	public void updateBoard(TableListVO tableListVO);
+	public List<TableListVO> getAllTableList();
 }
