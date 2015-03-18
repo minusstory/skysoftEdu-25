@@ -5,9 +5,10 @@
 
 
 <form action="update.do" method="POST" id="tableListVO"
-	name="tableListVO">
+	name="tableListVO" enctype="multipart/form-data">
 	<input type="hidden" id="seq" name="seq" value="${tableListVO.seq}" />
-
+	<input type="hidden" id="delFileYn" name="delFileYn" value="N" /> <!-- 멘토 -->
+	<input type="hidden" id="msg" name="msg" value="${msg}"/>
 	<table border="1">
 		<tr>
 			<td width="150">제목</td>
@@ -17,15 +18,32 @@
 
 		<tr>
 			<td width="150">내용</td>
-			<td width="300"><textarea wrap="hard" rows="10" cols="40" id="contents"
-					name="contents">${tableListVO.contents }</textarea></td>
+			<td width="300"><textarea wrap="hard" rows="10" cols="40"
+					id="contents" name="contents">${tableListVO.contents }</textarea></td>
+		</tr>
+
+		<tr>
+			<td width="150">첨부파일</td>
+			<td width="300">
+				<c:if test="${tableListVO.realfilenm ne null}">
+					<div id="fileView">
+						<a	href="attachFileDown.do?seq=${tableListVO.seq}">
+							${tableListVO.realfilenm}
+						</a>
+						<input type="button" value="선택한파일삭제" id="attacjFileDelete" name="attachFileDelete" onclick="fn_attachFileDelete()" />
+					</div>
+					<input type="file" id="attachFile" name="attachFile" style="display:none;" />
+				</c:if>
+				<c:if test="${tableListVO.realfilenm eq null }">
+					<input type="file" id="attachFile" name="attachFile" />
+				</c:if>
+			</td>
 		</tr>
 
 		<tr>
 			<td width="150">등록일</td>
-			<td width="300">
-				<fmt:formatDate value="${tableListVO.regdtm}" pattern="yyyyMMdd" type="DATE" />
-			</td>
+			<td width="300"><fmt:formatDate value="${tableListVO.regdtm}"
+					pattern="yyyyMMdd" type="DATE" /></td>
 		</tr>
 	</table>
 
@@ -34,7 +52,7 @@
 			<td>
 				<div class="btn">
 					<input type="button" id="updateBtn" name="updateBtn" value="수정"
-						onclick="javascript:formcheck()" />
+						onclick="formcheck()" />
 				</div>
 			</td>
 			<td>
@@ -54,6 +72,20 @@
 
 
 <script>
+	//오류메시지 전달 시 처리
+	window:onload = function(){
+		var msg = document.getElementById("msg").value;
+		if(msg!=""){
+			alert(msg);
+		}
+	};
+
+	function fn_attachFileDelete(){
+		document.tableListVO.attachFile.style.display='';
+		document.getElementById("fileView").style.display='none';
+		document.getElementById("delFileYn").value='Y';
+	}
+
 	function example() {
 		if (confirm("삭제하시겠습니까")) { //예
 			document.location.href = '/test/delete.do?seq=${tableListVO.seq}';
@@ -72,7 +104,7 @@
 			document.getElementById('contents').focus();
 			return;
 		}
-		else if(CheckStrLen(document.getElementById('title'),10) == false){
+		else if(CheckStrLen(document.getElementById('title'),20) == false){
 			alert("글자 수가 초과했습니다. 다시 작성하여 주세요");
 			document.getElementById('title').focus();
 			document.getElementById('title').value = '';

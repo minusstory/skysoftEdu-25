@@ -3,20 +3,28 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 
-<form action="secondInsert.do" method="POST" id="boardVO" name="boardVO">
+<form action="secondInsert.do" method="POST" id="tableListVO" name="tableListVO" enctype="multipart/form-data">
+	<input type="hidden" id="msg" name="msg" value="${msg}"/>
 	<table border="1">
 		<tr>
 			<td width="150">제목</td>
-			<td width="300"><input type="text" maxlength="30" id="title" name="title" "></td>
+			<td width="300"><input type="text" maxlength="30" id="title" name="title" ></td>
 		</tr>
 
 		<tr>
 			<td width="150">내용</td>
 
-			<td width="300"><textarea id="contents" wrap="hard" cols="30" rows="10" name="contents" ></textarea>
+			<td width="300">
+				<textarea id="contents" wrap="hard" cols="30" rows="10" name="contents" ></textarea>
 			</td>
 		</tr>
 
+		<tr>
+			<td width="150">첨부파일</td>
+			<td>
+				<input type="file" id="attachFile" name="attachFile" >
+			</td>
+		</tr>
 	</table>
 
 	<table>
@@ -37,10 +45,16 @@
 </form>
 
 <script type="text/javascript">
-
+	//오류메시지 전달 시 처리
+	window:onload = function(){
+		var msg = document.getElementById("msg").value;
+		if(msg!=""){
+			alert(msg);
+		}
+	};
 	function formcheck(){
 		if(document.getElementById('title').value == ''){
-			alert("제목을 입력하지 않으셨습니다.");
+			alert("제목을 입력하지 않으셨습니다.");0
 			document.getElementById('title').focus();
 			return ;
 		}

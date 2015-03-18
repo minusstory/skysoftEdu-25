@@ -4,7 +4,21 @@ public class PagingVO {
 	private int startrow;
 	private int endrow;
 	private int recordCountPerPage;
+	private String itemText;
+	private String searchItem;
 
+	public String getItemText() {
+		return itemText;
+	}
+	public void setItemText(String itemText) {
+		this.itemText = itemText;
+	}
+	public String getSearchItem() {
+		return searchItem;
+	}
+	public void setSearchItem(String searchItem) {
+		this.searchItem = searchItem;
+	}
 	public int getStartrow() {
 		return startrow;
 	}

@@ -6,7 +6,7 @@
 	<!-- typeAlias :: Start! -->
 	<typeAlias alias="tableListVO" type="egovframework.dev.test.vo.TableListVO" />
 	<typeAlias alias="PagingVO" type="egovframework.dev.test.vo.PagingVO" />
-	<typeAlias alias="boardVO" type="egovframework.dev.test.vo.BoardVO" />
+	<typeAlias alias="tableListFileVO" type="egovframework.dev.test.vo.TableListFileVO"/>
 <!-- 	<typeAlias alias="" type="" /> -->
 
 	<!-- typeAlias :: End! -->
@@ -16,19 +16,40 @@
 		<result property="title" column="TITLE"/>
 		<result property="contents" column="CONTENTS"/>
 		<result property="regdtm" column="REG_DTM"/>
+		<result property="realfilenm" column="REAL_FILE_NM" />
+		<result property="savefilenm" column="SAVE_FILE_NM" /> <!-- 추가 -->
+	</resultMap>
+
+	<!-- column은 SQL 매퍼 안에서 사용될 컬럼 이름이다. 디비의 테이블 위치와는 관련이 없다. -->
+
+	<resultMap id="getTableListFileMap" class="tableListFileVO">
+		<result property="orgseq" column="ORG_SEQ" />
+		<result property="useyn" column="USE_YN"/>
+		<result property="savefilenm" column="SAVE_FILE_NM"/>
+		<result property="realfilenm" column="REAL_FILE_NM"/>
+		<result property="regdtm" column="REG_DTM"/>
 	</resultMap>
 
 	<!-- C -->
-	<insert id="TableSkyTestDAO.addBoard" parameterClass="boardVO">
+	<insert id="TableSkyTestDAO.addBoard" parameterClass="tableListVO" >
+		<selectKey keyProperty="seq" resultClass="int">
+       		SELECT SEQ_SKY_TEST.NEXTVAL AS ID FROM DUAL
+   		</selectKey>
 		INSERT INTO TB_SKY_TEST(SEQ,TITLE,CONTENTS,REG_DTM)
-		VALUES(SEQ_SKY_TEST.nextval ,  #title# , #contents# , sysdate)
+		VALUES( #seq# ,  #title# , #contents# , sysdate)
 	</insert>
+
+    <insert id="TableSkyTestDAO.addAttachFile"  parameterClass="tableListFileVO">
+		INSERT INTO TB_SKY_TEST_FILE(ORG_SEQ,FILE_SEQ,USE_YN,SAVE_FILE_NM,REAL_FILE_NM,REG_DTM)
+		VALUES( #orgseq# , 1 , #useyn# , #savefilenm# , #realfilenm#, sysdate)
+    </insert> <!-- 첨부파일 -->
+
 
 	<!-- R -->
 	<select id="TableSkyTestDAO.searchBoard" parameterClass="java.lang.Integer" resultMap="getTableListMap">
-		SELECT 	*
-		FROM	TB_SKY_TEST
-		WHERE	seq = #seq#
+		SELECT 	A.* , B.REAL_FILE_NM , B.SAVE_FILE_NM
+		FROM	TB_SKY_TEST A left outer join TB_SKY_TEST_FILE B on A.seq = B.org_seq
+		WHERE	A.seq = #seq#
 	</select>
 
 	<!-- U -->
@@ -38,34 +59,65 @@
 		WHERE 	SEQ = #seq#
 	</update>
 
+	<update id="TableSkyTestDAO.updateAttachFile" parameterClass="tableListFileVO">
+		UPDATE  TB_SKY_TEST_FILE
+		SET		SAVE_FILE_NM = #savefilenm# , REAL_FILE_NM = #realfilenm#
+		WHERE 	ORG_SEQ = #orgseq#
+	</update> <!-- 첨부파일 -->
+
 	<!-- D -->
 	<delete id="TableSkyTestDAO.deleteBoard" parameterClass="java.lang.Integer">
 		DELETE FROM TB_SKY_TEST
 		WHERE seq = #seq#
 	</delete>
 
+	<delete id="TableSkyTestDAO.deleteAttachFile" parameterClass="java.lang.Integer">
+		DELETE FROM TB_SKY_TEST_FILE
+		WHERE org_seq = #seq#
+	</delete> <!-- 첨부파일 -->
 
 	<!-- L -->
 
-	<select id="TableSkyTestDAO.getTableList" parameterClass="PagingVO" resultMap="getTableListMap">
-		SELECT  *
+	<select id="TableSkyTestDAO.getTableListPlusFile" parameterClass="tableListVO" resultMap="getTableListMap">
+		SELECT  a.seq, a.title , a.contents , a.reg_dtm , b.REAL_FILE_NM , b.SAVE_FILE_NM
 		FROM	(SELECT aa.* , rownum rnum
 					FROM
-					(	SELECT * FROM TB_SKY_TEST ORDER BY SEQ desc )
-					 aa
-				)
-		<![CDATA[ WHERE rnum>=#startrow#+1 AND rnum<=#startrow#+#recordCountPerPage#	]]>
+					(	SELECT *
+						FROM TB_SKY_TEST
+						WHERE 1=1
+						<dynamic prepend="AND">
+							<isNotEmpty property="itemText">
+								<isEqual property="searchItem" compareValue="all">
+									title like '%' || #itemText# || '%' OR contents like #itemText# || '%'
+								</isEqual>
+								<isEqual property="searchItem" compareValue="title">
+									title like '%' || #itemText# || '%'
+								</isEqual>
+								<isEqual property="searchItem" compareValue="contents">
+									contents like #itemText# || '%'
+								</isEqual>
+							</isNotEmpty>
+						</dynamic>
+						ORDER BY SEQ desc
+					)
+				 aa
+				)  a left outer join TB_SKY_TEST_FILE b on a.seq = b.org_seq
+		<![CDATA[ where a.rnum>=#startrow#+1 AND a.rnum<=#startrow#+#recordCountPerPage#	]]>
 	</select>
 
-	<select id="TableSkyTestDAO.getAllTableList" resultMap="getTableListMap">
-		SELECT *
-		FROM TB_SKY_TEST
-		ORDER BY SEQ desc
-	</select>
 
-	<select id="TableSkyTestDAO.getCountAll" parameterClass="java.lang.Integer" resultClass="java.lang.Integer">
-		SELECT 	COUNT(*)
+	<select id="TableSkyTestDAO.getCountByObject" parameterClass="tableListVO" resultClass="java.lang.Integer" >
+		SELECT	COUNT(*)
 		FROM	TB_SKY_TEST
+		<dynamic prepend="WHERE">
+			<isNotNull property="title">
+				title like '%' || #title# || '%'
+			</isNotNull>
+			<isNotNull property="contents">
+				contents like #contents# || '%'
+			</isNotNull>
+		</dynamic>
+		ORDER BY SEQ desc
 	</select>
 
 </sqlMap>

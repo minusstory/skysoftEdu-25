@@ -2,15 +2,17 @@ package egovframework.dev.test.vo;
 
 import java.util.Date;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class TableListVO extends PagingVO {
 	private int seq;
 	private String title;
 	private String contents;
 	private Date regdtm;
+	private String realfilenm;
+	private String savefilenm;
+	private MultipartFile attachFile;
 
-	public TableListVO() {
-		super();
-	}
 	public int getSeq() {
 		return seq;
 	}
@@ -34,6 +36,24 @@ public class TableListVO extends PagingVO {
 	}
 	public void setRegdtm(Date regdtm) {
 		this.regdtm = regdtm;
+	}
+	public String getRealfilenm() {
+		return realfilenm;
+	}
+	public void setRealfilenm(String realfilenm) {
+		this.realfilenm = realfilenm;
+	}
+	public MultipartFile getAttachFile() {
+		return attachFile;
+	}
+	public void setAttachFile(MultipartFile attachFile) {
+		this.attachFile = attachFile;
+	}
+	public String getSavefilenm() {
+		return savefilenm;
+	}
+	public void setSavefilenm(String savefilenm) {
+		this.savefilenm = savefilenm;
 	}
 
 }

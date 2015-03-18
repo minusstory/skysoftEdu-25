@@ -7,8 +7,8 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import egovframework.dev.test.dao.TableSkyTestDAO;
-import egovframework.dev.test.vo.BoardVO;
 import egovframework.dev.test.vo.PagingVO;
+import egovframework.dev.test.vo.TableListFileVO;
 import egovframework.dev.test.vo.TableListVO;
 import egovframework.rte.fdl.cmmn.AbstractServiceImpl;
 
@@ -20,13 +20,8 @@ public class TableSkyTestServiceImpl extends AbstractServiceImpl implements
 	private TableSkyTestDAO tableSkyTestDAO;
 
 	@Override
-	public Integer getCountAll() {
-		return tableSkyTestDAO.getCountAll();
-	}
-
-	@Override
-	public List<TableListVO> getTableList(PagingVO pagingVO) {
-		return tableSkyTestDAO.getTableList(pagingVO);
+	public List<TableListVO> getTableListPlusFile(PagingVO pagingVO){
+		return tableSkyTestDAO.getTableListPlusFile(pagingVO);
 	}
 
 	@Override
@@ -35,8 +30,8 @@ public class TableSkyTestServiceImpl extends AbstractServiceImpl implements
 	}
 
 	@Override
-	public void addBoard(BoardVO boardVO) {
-		tableSkyTestDAO.addBoard(boardVO);
+	public int addBoard(TableListVO tableListVO) {
+		return tableSkyTestDAO.addBoard(tableListVO);
 	}
 
 	@Override
@@ -48,9 +43,22 @@ public class TableSkyTestServiceImpl extends AbstractServiceImpl implements
 	public void updateBoard(TableListVO tableListVO) {
 		tableSkyTestDAO.updateBoard(tableListVO);
 	}
+	@Override
+	public Integer getCountByObject(TableListVO tableListVO) {
+		return tableSkyTestDAO.getCountByObject(tableListVO);
+	}
 
 	@Override
-	public List<TableListVO> getAllTableList() {
-		return tableSkyTestDAO.getAllTabelList();
+	public void addAttachFile(TableListFileVO tableListFileVO) {
+		tableSkyTestDAO.addAttachFile(tableListFileVO);
+	}
+
+	@Override
+	public void deleteAttachFile(int seq) {
+		tableSkyTestDAO.deleteAttachFile(seq);
+	}
+	@Override
+	public void updateAttachFile(TableListFileVO tableListFileVO) {
+		tableSkyTestDAO.updateAttachFile(tableListFileVO);
 	}
 }
