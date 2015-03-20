@@ -37,4 +37,7 @@
 		<property name="preparerFactoryClass" value="org.springframework.web.servlet.view.tiles2.SpringBeanPreparerFactory"/>
 	</bean>
 
+	<!-- EXCEL DOWN -->
+	<bean id="categoryExcelView" class="egovframework.dev.test.view.CategoryExcelView" />
+
 </beans>

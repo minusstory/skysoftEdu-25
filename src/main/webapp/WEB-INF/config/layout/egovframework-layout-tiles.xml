@@ -14,4 +14,20 @@
 		<put-attribute name="content" value="/WEB-INF/jsp/test/{1}.jsp"/>
 	</definition>
 
+	<definition name="/*" extends="test.nothing">
+		<put-attribute name="content" value="/WEB-INF/jsp/{1}.jsp"/>
+	</definition>
+
+	<definition name="/member/*" extends="test.nothing">
+		<put-attribute name="content" value="/WEB-INF/jsp/member/{1}.jsp"/>
+	</definition>
+
+	<definition name="/mypage/*" extends="test.nothing">
+		<put-attribute name="content" value="/WEB-INF/jsp/mypage/{1}.jsp"/>
+	</definition>
+
+	<definition name="/login/*" extends="test.nothing">
+		<put-attribute name="content" value="/WEB-INF/jsp/login/{1}.jsp"/>
+	</definition>
+
 </tiles-definitions>

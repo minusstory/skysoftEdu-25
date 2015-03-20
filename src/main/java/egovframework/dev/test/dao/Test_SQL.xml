@@ -8,6 +8,7 @@
 	<typeAlias alias="PagingVO" type="egovframework.dev.test.vo.PagingVO" />
 	<typeAlias alias="tableListFileVO" type="egovframework.dev.test.vo.TableListFileVO"/>
 	<typeAlias alias="apiVO" type="egovframework.dev.test.vo.ApiVO" />
+	<typeAlias alias="memberVO" type="egovframework.dev.test.vo.MemberVO" />
 <!-- 	<typeAlias alias="" type="" /> -->
 
 	<!-- typeAlias :: End! -->
@@ -162,4 +163,84 @@
 				)  a
 		<![CDATA[ where a.rnum>=#startrow#+1 AND a.rnum<=#startrow#+#recordCountPerPage#	]]>
 	</select>
+
+	<!-- MEMBER -->
+	<select id="MemberDAO.isMemberCheck" parameterClass="memberVO" resultClass="memberVO" >
+		SELECT 	*
+		FROM	TB_SKY_MEMBER
+		WHERE	RRNUMBER = #rrnumber1#||'-'||#rrnumber2# AND NAME = #name# AND USE_YN = 'Y'
+	</select>
+
+	<select id="MemberDAO.searchMemberById" parameterClass="memberVO" resultClass="java.lang.Integer">
+		SELECT 	COUNT(*)
+		FROM	TB_SKY_MEMBER
+		WHERE	id=#id#
+	</select>
+
+	<insert id="MemberDAO.addMember" parameterClass="memberVO" >
+		INSERT INTO TB_SKY_MEMBER(NAME,RRNUMBER,ID,PASSWORD,TEL,HP,EMAIL,ZIPCODE,ADDRESS,D_ADDRESS,PROFILE,USE_YN)
+		VALUES(#name#,#rrnumber1#||'-'||#rrnumber2#  , #id# , #password#,
+						<dynamic >
+							<isNotNull property="telFir">
+								#telFir#||'-'||#telSec#||'-'||#telThr# ,
+							</isNotNull>
+							<isNull property="telFir">
+								'' ,
+							</isNull>
+							<isNotNull property="hpFir">
+								#hpFir#||'-'||#hpSec#||'-'||#hpThr# ,
+							</isNotNull>
+							<isNull property="hpFir">
+								'' ,
+							</isNull>
+						</dynamic>
+						#emailFir#||'@'||#emailSec# , #zipcode#, #address#,#d_address#,#profile#,'Y' )
+<!-- 		INSERT INTO TB_SKY_MEMBER(NAME,RRNUMBER,ID,PASSWORD,TEL,HP,EMAIL,ZIPCODE,ADDRESS,D_ADDRESS,PROFILE,USE_YN) -->
+<!-- 		VALUES(#name#,#rrnumber1#||'-'||#rrnumber2#  , #id# , #password#,  -->
+<!-- 						#telFir#||'-'||#telSec#||'-'||#telThr# , -->
+<!-- 						#hpFir#||'-'||#hpSec#||'-'||#hpThr# , -->
+<!-- 						#emailFir#||'@'||#emailSec# , #zipcode#, #address#,#d_address#,#profile#,'Y' ) -->
+	</insert>
+
+	<!-- Login -->
+	<select id="LoginDAO.getMember" parameterClass="memberVO" resultClass="memberVO">
+		SELECT	*
+		FROM	TB_SKY_MEMBER
+		WHERE	id = #id#
+					<dynamic prepend="AND">
+						<isNotNull  property="password">
+								password = #password#
+						</isNotNull>
+					</dynamic>
+	</select>
+
+
+	<!-- My Page -->
+	<update id="MyPageDao.updateInfo" parameterClass="memberVO">
+		UPDATE 	TB_SKY_MEMBER
+		SET			PASSWORD=#password#,
+						<dynamic >
+							<isNotNull property="telFir">
+								TEL = #telFir#||'-'||#telSec#||'-'||#telThr# ,
+							</isNotNull>
+							<isNull property="telFir">
+								TEL = '' ,
+							</isNull>
+							<isNotNull property="hpFir">
+								HP = #hpFir#||'-'||#hpSec#||'-'||#hpThr# ,
+							</isNotNull>
+							<isNull property="hpFir">
+								HP = '' ,
+							</isNull>
+						</dynamic>
+<!-- 						HP=#hpFir#||'-'||#hpSec#||'-'||#hpThr# , -->
+<!-- 						TEL=#telFir#||'-'||#telSec#||'-'||#telThr# , -->
+						EMAIL=#emailFir#||'@'||#emailSec# ,
+						ZIPCODE=#zipcode# ,
+						ADDRESS=#address# ,
+						D_ADDRESS=#d_address# ,
+						PROFILE=#profile#
+		WHERE		id=#id#
+	</update>
+
 </sqlMap>
